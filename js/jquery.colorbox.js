@@ -344,7 +344,7 @@
 			$close = $div("Close")
 		);
 		
-		$info = $div(false, 'float: none;').append(
+		$info = $div('InfoContainer', 'float: none;').append(
 			$title = $div("Title"),
 			$website = $div("Website"),
 			$details = $div("Details")
@@ -386,8 +386,6 @@
 		loadedHeight = $loaded.outerHeight(true);
 		loadedWidth = $loaded.outerWidth(true);
 		
-		console.log("$info.height() = "+ $info.height());
-		
 		// Setting padding to remove the need to do size conversions during the animation step.
 		$box.css({"padding-bottom": interfaceHeight, "padding-right": interfaceWidth}).hide();
 		
@@ -403,7 +401,7 @@
             publicMethod.close();
         });
 		
-		$groupControls = $next.add($prev).add($current).add($slideshow);
+		$groupControls = $next.add($prev).add($slideshow);
 		
 		// Adding the 'hover' class allowed the browser to load the hover-state
 		// background graphics in case the images were not part of a sprite.  The class can now can be removed.
@@ -602,6 +600,7 @@
                 clearTimeout(loadingTimer);
                 $loadingOverlay.hide();
                 trigger(event_complete, settings.onComplete);
+				$('#cboxInfo').css('height', $('#cboxInfoContainer').height());
             };
             
             if (isIE) {
@@ -621,11 +620,12 @@
 			console.log('newheight = ' + newHeight);
 			
 			$('#cboxWrapper').css('height', newHeight);
+			$('#colorbox').css('height', newHeight);
 
             
             if (total > 1) { // handle grouping
                 if (typeof settings.current === "string") {
-                    $current.html(settings.current.replace('{current}', index + 1).replace('{total}', total)).show();
+                    //$current.html(settings.current.replace('{current}', index + 1).replace('{total}', total)).show();
                 }
                 
                 $next[(settings.loop || index < total - 1) ? "show" : "hide"]().html(settings.next);
@@ -814,6 +814,7 @@
 				prep(status === 'error' ? $div('Error').text('Request unsuccessful: ' + xhr.statusText) : $(this).contents());
 			});
 		}
+	
 	};
         
 	// Navigates to the next page/image in a set.
