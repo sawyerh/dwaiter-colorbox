@@ -1,6 +1,7 @@
-// ColorBox v1.3.17.2 - a full featured, light-weight, customizable lightbox based on jQuery 1.3+
+// This is a customized version of ColorBox v1.3.17.2 - a full featured, light-weight, customizable lightbox based on jQuery 1.3+
 // Copyright (c) 2011 Jack Moore - jack@colorpowered.com
 // Licensed under the MIT license: http://www.opensource.org/licenses/mit-license.php
+// https://github.com/sawyerh/colorbox
 
 (function ($, document, window) {
 	var
@@ -155,9 +156,9 @@
 		
 		if($(element).attr('data-link')){
 			settings.website = '<a href="'+ $(element).attr('data-link') +'" class="website-link">Visit Website</a>';
+		} else {
+			settings.website = '';
 		}
-		
-		console.log( settings.details + ' | ' + settings.website );
         
         if (typeof settings.href === "string") {
             settings.href = $.trim(settings.href);
@@ -351,19 +352,9 @@
 		)
 		
 		$wrap.append( // The 3x3 Grid that makes up ColorBox
-			/*$div().append(
-				$div("TopLeft"),
-				$topBorder = $div("TopCenter"),
-				$div("TopRight")
-			),*/
 			$div(false, 'clear:left').append(
 				$content
 			),
-			// $div(false, 'clear:left').append(
-			// 				$div("BottomLeft"),
-			// 				$bottomBorder = $div("BottomCenter"),
-			// 				$div("BottomRight")
-			// 			),
 			$div('Info', 'clear:left; overflow: hidden;').append(
 				$info
 			)
@@ -610,19 +601,22 @@
                 }
             }
             
-            $title.html(settings.title).add($loaded).show();
+			$title.html(settings.title).add($loaded).show();
 			
-			$website.html(settings.website);
-			$details.html(settings.details);			
-			$info.parent().css('height', $info.parent().height());
-			
-			newHeight = $info.parent().height() + parseInt($('#cboxWrapper').height());
-			console.log('newheight = ' + newHeight);
-			
-			$('#cboxWrapper').css('height', newHeight);
-			$('#colorbox').css('height', newHeight);
+			// Add the description and website link if a title is defined.
+			if(settings.title == ''){
+				$('#cboxInfo').addClass('empty');
+			} else{
+				$('#cboxInfo').removeClass('empty');
+				$website.html(settings.website);
+				$details.html(settings.details);			
+				$info.parent().css('height', $info.parent().height());
 
-            
+				newHeight = $info.parent().height() + parseInt($('#cboxWrapper').height());
+				$('#cboxWrapper').css('height', newHeight);
+				$('#colorbox').css('height', newHeight);
+			}
+
             if (total > 1) { // handle grouping
                 if (typeof settings.current === "string") {
                     //$current.html(settings.current.replace('{current}', index + 1).replace('{total}', total)).show();
