@@ -151,6 +151,13 @@
 		settings.rel = settings.rel || element.rel || 'nofollow';
 		settings.href = settings.href || $(element).attr('href');
 		settings.title = settings.title || element.title;
+		settings.details = $('.details', element).html();
+		
+		if($(element).attr('data-link')){
+			settings.website = '<a href="'+ $(element).attr('data-link') +'" class="website-link">Visit Website</a>';
+		}
+		
+		console.log( settings.details + ' | ' + settings.website );
         
         if (typeof settings.href === "string") {
             settings.href = $.trim(settings.href);
@@ -330,28 +337,35 @@
 		$content = $div("Content").append(
 			$loaded = $div("LoadedContent", 'width:0; height:0; overflow:hidden'),
 			$loadingOverlay = $div("LoadingOverlay").add($div("LoadingGraphic")),
-			$title = $div("Title"),
 			$current = $div("Current"),
 			$next = $div("Next"),
 			$prev = $div("Previous"),
 			$slideshow = $div("Slideshow").bind(event_open, slideshow),
 			$close = $div("Close")
 		);
+		
+		$info = $div(false, 'float: none;').append(
+			$title = $div("Title"),
+			$website = $div("Website"),
+			$details = $div("Details")
+		)
+		
 		$wrap.append( // The 3x3 Grid that makes up ColorBox
-			$div().append(
+			/*$div().append(
 				$div("TopLeft"),
 				$topBorder = $div("TopCenter"),
 				$div("TopRight")
-			),
+			),*/
 			$div(false, 'clear:left').append(
-				$leftBorder = $div("MiddleLeft"),
-				$content,
-				$rightBorder = $div("MiddleRight")
+				$content
 			),
-			$div(false, 'clear:left').append(
-				$div("BottomLeft"),
-				$bottomBorder = $div("BottomCenter"),
-				$div("BottomRight")
+			// $div(false, 'clear:left').append(
+			// 				$div("BottomLeft"),
+			// 				$bottomBorder = $div("BottomCenter"),
+			// 				$div("BottomRight")
+			// 			),
+			$div('Info', 'clear:left; overflow: hidden;').append(
+				$info
 			)
 		).children().children().css({'float': 'left'});
 		
@@ -367,10 +381,12 @@
 		}).addClass('hover');
 		
 		// Cache values needed for size calculations
-		interfaceHeight = $topBorder.height() + $bottomBorder.height() + $content.outerHeight(true) - $content.height();//Subtraction needed for IE6
-		interfaceWidth = $leftBorder.width() + $rightBorder.width() + $content.outerWidth(true) - $content.width();
+		interfaceHeight = $content.outerHeight(true) - $content.height() + $info.height();//Subtraction needed for IE6
+		interfaceWidth = $content.outerWidth(true) - $content.width();
 		loadedHeight = $loaded.outerHeight(true);
 		loadedWidth = $loaded.outerWidth(true);
+		
+		console.log("$info.height() = "+ $info.height());
 		
 		// Setting padding to remove the need to do size conversions during the animation step.
 		$box.css({"padding-bottom": interfaceHeight, "padding-right": interfaceWidth}).hide();
@@ -468,8 +484,8 @@
 		
 		function modalDimensions(that) {
 			// loading overlay height has to be explicitly set for IE6.
-			$topBorder[0].style.width = $bottomBorder[0].style.width = $content[0].style.width = that.style.width;
-			$loadingOverlay[0].style.height = $loadingOverlay[1].style.height = $content[0].style.height = $leftBorder[0].style.height = $rightBorder[0].style.height = that.style.height;
+			$content[0].style.width = that.style.width;
+			$loadingOverlay[0].style.height = $loadingOverlay[1].style.height = $content[0].style.height = that.style.height;
 		}
 		
 		$box.dequeue().animate({width: settings.w + loadedWidth, height: settings.h + loadedHeight, top: top, left: left}, {
@@ -596,6 +612,16 @@
             }
             
             $title.html(settings.title).add($loaded).show();
+			
+			$website.html(settings.website);
+			$details.html(settings.details);			
+			$info.parent().css('height', $info.parent().height());
+			
+			newHeight = $info.parent().height() + parseInt($('#cboxWrapper').height());
+			console.log('newheight = ' + newHeight);
+			
+			$('#cboxWrapper').css('height', newHeight);
+
             
             if (total > 1) { // handle grouping
                 if (typeof settings.current === "string") {
